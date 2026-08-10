@@ -1,0 +1,39 @@
+Data	
+Student ID: 20260XXX
+Student Name	XXXX XXXX
+Programme	BSc Computing with Finance
+Faculty	Faculty of Science
+Year of Study	4
+Completed Credits	120
+Required Credits	120
+Outstanding Requirements	None
+Completion Status	Completed
+Verification Status	Verified
+Letter Type	Completion Letter
+Letter Date	10 June 2026
+Letter Reference	SCDL-2026-01000
+Issued By	Academic Records Officer
+
+
+PRIVACY CONSIDERATIONS
+- The system stores only whats needed to verify completion of the student
+-Only authorised staff and the student csn see the students records
+-Data is only used to verify Completion and give out the letter of completion
+
+
+RISKS
+-The system could incorrectly identify a student as having completed or not completed their programme
+-Unauthorised people could gain access to student records
+-System could be down at anytime when students need their letter of completion
+-Student records could be lost because of technical failures
+
+
+ETHICAL CONSIDERATIONS
+-Keep records of verification and letter-issuance decisions so they can be traced to authorised users.
+-Protect digital letters from being falsely created, altered, or used by someone else.
+-Allow authorised staff to review cases where the system cannot make a clear decision.
+-Students should be able to understand their completion status and the reason for any rejection or delay.
+
+
+
+
