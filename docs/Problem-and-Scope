@@ -1,0 +1,27 @@
+Scope,Assumptions and Constraints
+
+IN SCOPE
+-Students submits a request for a letter of completion through the system
+-System checks the student records for completion status, the number of credits completed 
+-Staff review and approves or rejects the request
+-System generates a letter of completion if approved or generates a rejection letter if not approved
+-Student downloads the letter
+
+OUT OF SCOPE
+-Changing official university grades
+-Registering students for courses
+-Calculating tuition fees
+-Processing graduation ceremonies
+-Changing university policies
+
+ASSUMPTIONS
+-Authorised staff are responsible for final approval
+-Programme requirements are defined and available to the system
+-Studnets have a university login/ID or email accounts
+
+CONSTRAINTS
+-the project should be completed in one semester
+-The prototype must not use confidential student records
+-The team has limited access to lecturer-approved technology
+
+
