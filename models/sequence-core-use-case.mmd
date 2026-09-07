@@ -1,0 +1,36 @@
+sequenceDiagram
+    actor Student
+    participant UI as Student Portal
+    participant Record as AcademicRecord
+    participant Checker as CompletionChecker
+    participant Letter as CompletionLetter
+
+    Student->>UI: requestCompletionLetter()
+    UI->>Checker: getCompletionStatus(studentId)
+    Checker->>Record: retrieveAcademicRecord(studentId)
+
+    alt academic record cannot be retrieved (A2)
+        Record-->>Checker: retrievalError
+        Checker-->>UI: statusUnavailable
+        UI-->>Student: displayError()
+    else record retrieved
+        Record-->>Checker: academicRecord
+        Checker->>Checker: confirmRequiredCredits()
+        Checker->>Checker: confirmRequiredModules()
+
+        alt outstanding credits or modules (A1)
+            Checker-->>UI: notEligible(outstandingItems)
+            UI-->>Student: displayOutstandingRequirements()
+        else all requirements satisfied
+            Checker-->>UI: eligibleForCompletion
+            UI->>Letter: generateOrRetrieve(studentId)
+
+            alt letter cannot be generated (A3)
+                Letter-->>UI: generationFailed
+                UI-->>Student: displayTemporarilyUnavailable()
+            else letter available
+                Letter-->>UI: completionLetter
+                UI-->>Student: makeLetterAvailable()
+            end
+        end
+    end
