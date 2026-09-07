@@ -1,0 +1,35 @@
+sequenceDiagram
+    actor Student
+    participant Portal as Request Portal
+    participant Records as Student Records
+    participant Finance as Finance Clearance
+    actor Registry as Registry Officer
+    participant Letters as Letter Service
+
+    Student->>Portal: submitLetterRequest()
+    Portal->>Records: validateStudentActive(studentId)
+    Records-->>Portal: recordStatus
+
+    alt record not active
+        Portal-->>Student: reject(reason)
+    else record active
+        Portal->>Records: checkCompletionStatus(studentId)
+        Records-->>Portal: completionResult
+
+        alt outstanding results exist
+            Portal-->>Student: reject(A3 incomplete academic record)
+        else completion confirmed
+            Portal->>Finance: checkClearance(studentId)
+            Finance-->>Portal: clearanceResult
+
+            alt clearance failed
+                Portal-->>Student: hold(A4 outstanding obligation)
+            else cleared
+                Portal->>Registry: submitForApproval(requestId)
+                Registry-->>Portal: approvalDecision
+                Portal->>Letters: generateLetter(requestId)
+                Letters-->>Portal: signedLetter + verificationCode
+                Portal-->>Student: notifyLetterAvailable(verificationCode)
+            end
+        end
+    end
