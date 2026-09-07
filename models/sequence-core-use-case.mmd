@@ -1,35 +1,36 @@
 sequenceDiagram
     actor Student
-    participant Portal as Request Portal
-    participant Records as Student Records
-    participant Finance as Finance Clearance
-    actor Registry as Registry Officer
-    participant Letters as Letter Service
+    participant UI as Student Portal
+    participant Record as AcademicRecord
+    participant Checker as CompletionChecker
+    participant Letter as CompletionLetter
 
-    Student->>Portal: submitLetterRequest()
-    Portal->>Records: validateStudentActive(studentId)
-    Records-->>Portal: recordStatus
+    Student->>UI: requestCompletionLetter()
+    UI->>Checker: getCompletionStatus(studentId)
+    Checker->>Record: retrieveAcademicRecord(studentId)
 
-    alt record not active
-        Portal-->>Student: reject(reason)
-    else record active
-        Portal->>Records: checkCompletionStatus(studentId)
-        Records-->>Portal: completionResult
+    alt academic record cannot be retrieved (A2)
+        Record-->>Checker: retrievalError
+        Checker-->>UI: statusUnavailable
+        UI-->>Student: displayError()
+    else record retrieved
+        Record-->>Checker: academicRecord
+        Checker->>Checker: confirmRequiredCredits()
+        Checker->>Checker: confirmRequiredModules()
 
-        alt outstanding results exist
-            Portal-->>Student: reject(A3 incomplete academic record)
-        else completion confirmed
-            Portal->>Finance: checkClearance(studentId)
-            Finance-->>Portal: clearanceResult
+        alt outstanding credits or modules (A1)
+            Checker-->>UI: notEligible(outstandingItems)
+            UI-->>Student: displayOutstandingRequirements()
+        else all requirements satisfied
+            Checker-->>UI: eligibleForCompletion
+            UI->>Letter: generateOrRetrieve(studentId)
 
-            alt clearance failed
-                Portal-->>Student: hold(A4 outstanding obligation)
-            else cleared
-                Portal->>Registry: submitForApproval(requestId)
-                Registry-->>Portal: approvalDecision
-                Portal->>Letters: generateLetter(requestId)
-                Letters-->>Portal: signedLetter + verificationCode
-                Portal-->>Student: notifyLetterAvailable(verificationCode)
+            alt letter cannot be generated (A3)
+                Letter-->>UI: generationFailed
+                UI-->>Student: displayTemporarilyUnavailable()
+            else letter available
+                Letter-->>UI: completionLetter
+                UI-->>Student: makeLetterAvailable()
             end
         end
     end
