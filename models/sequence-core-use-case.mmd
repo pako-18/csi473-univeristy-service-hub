@@ -1,0 +1,67 @@
+---
+title: UC-02 Request Completion Letter — request to issued letter
+---
+sequenceDiagram
+    autonumber
+    actor Student
+    participant LR as LetterRequest
+    participant EN as Enrolment
+    participant CC as CompletionCheck
+    participant CR as CompletionRequirement
+    actor RO as RegistryOfficer
+    participant AD as ApprovalDecision
+    participant CL as CompletionLetter
+    participant VC as VerificationCode
+
+    Student->>LR: submitRequest(purpose)
+    Note over LR: status = Submitted
+
+    LR->>EN: validateActive(studentId)
+    EN-->>LR: enrolmentStatus
+
+    alt enrolment not active
+        LR-->>Student: reject(A2 record not active)
+        Note over LR: status = Refused
+
+    else enrolment active
+        LR->>CC: performCheck(enrolment)
+        Note over LR: status = UnderVerification
+
+        CC->>EN: getCompletedResults()
+        EN->>EN: calculateCreditsEarned()
+        EN-->>CC: results, totalCredits
+
+        CC->>CR: isSatisfiedBy(results, totalCredits)
+        CR-->>CC: satisfied / unmet detail
+
+        CC->>CC: determineOutcome()
+        CC-->>LR: outcome, unmetRequirements
+
+        alt outcome = Not Eligible
+            LR->>AD: recordRefusal(reason = unmetRequirements)
+            AD-->>LR: decision = Rejected, decidedOn
+            LR-->>Student: reject(A3 itemised outstanding requirements)
+            Note over LR: status = Refused
+
+        else outcome = Eligible
+            Note over LR: status = AwaitingApproval
+            LR->>RO: notifyPendingApproval()
+            RO->>AD: approve(reason)
+            AD-->>LR: decision = Approved, decidedOn
+
+            alt Registry Officer rejects
+                LR-->>Student: reject(A5 reason recorded)
+                Note over LR: status = Refused
+
+            else Registry Officer approves
+                LR->>CL: generate(student, enrolment)
+                CL->>VC: create()
+                VC-->>CL: code
+                CL-->>LR: letterNumber, issuedOn
+                Note over LR: status = LetterIssued
+
+                CL->>Student: deliverToInstitutionalEmail()
+                Note over LR: status = Delivered
+            end
+        end
+    end
