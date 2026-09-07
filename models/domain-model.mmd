@@ -1,0 +1,90 @@
+
+classDiagram
+    class Student {
+        +studentNumber
+        +fullName
+        +admissionYear
+    }
+    class Programme {
+        +programmeCode
+        +title
+        +department
+        +minimumCredits
+    }
+    class Enrolment {
+        +startDate
+        +status
+    }
+    class CourseResult {
+        +courseCode
+        +academicYear
+        +grade
+        +creditsEarned
+    }
+    class CompletionRequirement {
+        +description
+        +requiredCredits
+        +isMandatory
+    }
+    class CompletionCheck {
+        +checkedOn
+        +outcome
+        +unmetRequirements
+    }
+    class LetterRequest {
+        +referenceNumber
+        +requestedOn
+        +purpose
+        +status
+    }
+    class ApprovalDecision {
+        +decidedOn
+        +decision
+        +reason
+    }
+    class RegistryOfficer {
+        +staffNumber
+        +fullName
+    }
+    class CompletionLetter {
+        +letterNumber
+        +issuedOn
+        +validUntil
+    }
+    class LetterTemplate {
+        +templateCode
+        +version
+        +bodyText
+    }
+    class VerificationCode {
+        +code
+        +issuedOn
+        +isRevoked
+    }
+    class VerificationRequest {
+        +requestedOn
+        +verifierName
+        +verifierOrganisation
+        +outcome
+    }
+    class AuditEntry {
+        +occurredAt
+        +action
+        +actor
+    }
+
+    Student "1" -- "0..*" Enrolment : holds
+    Programme "1" -- "0..*" Enrolment : governs
+    Enrolment "1" *-- "0..*" CourseResult : records
+    Programme "1" *-- "1..*" CompletionRequirement : defines
+    Enrolment "1" -- "0..*" CompletionCheck : assessed by
+    CompletionCheck "1" -- "1..*" CompletionRequirement : evaluates
+    Student "1" -- "0..*" LetterRequest : submits
+    LetterRequest "1" -- "0..1" CompletionCheck : triggers
+    LetterRequest "1" -- "0..1" ApprovalDecision : resolved by
+    RegistryOfficer "1" -- "0..*" ApprovalDecision : makes
+    LetterRequest "1" -- "0..1" CompletionLetter : produces
+    LetterTemplate "1" -- "0..*" CompletionLetter : formats
+    CompletionLetter "1" *-- "1" VerificationCode : carries
+    VerificationCode "1" -- "0..*" VerificationRequest : answers
+    LetterRequest "1" -- "0..*" AuditEntry : logs

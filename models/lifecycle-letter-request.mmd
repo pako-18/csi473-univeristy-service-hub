@@ -1,0 +1,46 @@
+---
+title: LetterRequest lifecycle
+---
+stateDiagram-v2
+    [*] --> Submitted : student submits request (UC-02)
+
+    Submitted --> UnderVerification : system runs CompletionCheck
+    Submitted --> Cancelled : student withdraws request
+
+    UnderVerification --> AwaitingApproval : [CompletionCheck.outcome = Eligible] / FR-08
+    UnderVerification --> Refused : [CompletionCheck.outcome = Not Eligible] / FR-07, FR-08
+    UnderVerification --> VerificationFailed : academic record cannot be retrieved
+
+    VerificationFailed --> UnderVerification : record becomes available / retry
+    VerificationFailed --> Cancelled : retry limit reached
+
+    AwaitingApproval --> Approved : RegistryOfficer approves / FR-10
+    AwaitingApproval --> Refused : RegistryOfficer rejects with reason / FR-10
+
+    Approved --> LetterIssued : CompletionLetter generated with VerificationCode / FR-11, FR-13
+
+    LetterIssued --> Delivered : letter sent to institutional email / FR-12
+    LetterIssued --> DeliveryFailed : delivery not confirmed in window
+
+    DeliveryFailed --> LetterIssued : resend attempted
+    DeliveryFailed --> Delivered : delivery confirmed on retry
+
+    Delivered --> Revoked : letter withdrawn, VerificationCode.isRevoked = true
+
+    Refused --> Submitted : student resubmits after record updated / FR-09
+    Refused --> [*]
+    Cancelled --> [*]
+    Delivered --> [*]
+    Revoked --> [*]
+
+    note right of UnderVerification
+        Guarded by CompletionCheck against
+        the Enrolment's CompletionRequirement
+        set (see D-002 Decision 2)
+    end note
+
+    note right of Refused
+        ApprovalDecision records the outcome
+        and reason even when no letter is
+        produced (see D-002 Decision 4)
+    end note
