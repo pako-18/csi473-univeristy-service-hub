@@ -1,0 +1,83 @@
+---
+title: UC-04 Access Completion Letter — request to issued letter
+---
+sequenceDiagram
+    autonumber
+    actor S as Student
+    participant LR as LetterRequest
+    participant CC as CompletionCheck
+    participant EN as Enrolment
+    participant CR as CompletionRequirement
+    participant RO as RegistryOfficer
+    participant AD as ApprovalDecision
+    participant CL as CompletionLetter
+    participant LT as LetterTemplate
+    participant VC as VerificationCode
+    participant AE as AuditEntry
+
+    S->>LR: submitRequest(purpose)
+    activate LR
+    Note over LR: status = Submitted<br/>reference number assigned
+    LR->>AE: record(action = "request submitted", actor = Student)
+
+    LR->>CC: performCheck(enrolment)
+    activate CC
+    Note over CC: status = UnderVerification
+
+    CC->>EN: getCompletedResults()
+    activate EN
+    EN-->>CC: CourseResult set
+    EN->>EN: calculateCreditsEarned()
+    EN-->>CC: totalCredits
+    deactivate EN
+
+    CC->>CR: isSatisfiedBy(results, totalCredits)
+    activate CR
+    CR-->>CC: satisfied / unmet detail
+    deactivate CR
+
+    CC->>CC: determineOutcome()
+    CC-->>LR: outcome, unmetRequirements
+    deactivate CC
+
+    alt outcome = Eligible
+        Note over LR: status = AwaitingApproval
+
+        LR->>RO: notifyPendingApproval()
+        RO->>AD: approve(reason)
+        activate AD
+        AD-->>LR: decision = Approved, decidedOn
+        AD->>AE: record(action = "request approved", actor = RegistryOfficer)
+        deactivate AD
+
+        LR->>CL: generate(student, enrolment)
+        activate CL
+        CL->>LT: applyTemplate(version)
+        LT-->>CL: formatted body
+        CL->>VC: create()
+        activate VC
+        VC-->>CL: code
+        deactivate VC
+        CL-->>LR: letterNumber, issuedOn
+        Note over LR: status = LetterIssued
+        CL->>AE: record(action = "letter generated")
+        deactivate CL
+
+        CL->>S: deliverToInstitutionalEmail()
+        Note over LR: status = Delivered<br/>delivery logged
+        S-->>LR: acknowledgement
+
+    else outcome = Not Eligible
+        Note over LR: status = Refused<br/>no letter is produced
+
+        LR->>AD: recordRefusal(reason = unmetRequirements)
+        activate AD
+        AD-->>LR: decision = Rejected, decidedOn
+        AD->>AE: record(action = "request refused", actor = System)
+        deactivate AD
+
+        LR-->>S: itemised list of outstanding requirements
+        Note over S,LR: Student may resubmit once academic<br/>staff update the record
+    end
+
+    deactivate LR
