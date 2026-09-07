@@ -156,25 +156,43 @@ the university's scheduled operating hours.
 
 # 8. Use cases
 
-Five use cases describe the system's behaviour from the actors' point of view.
+Eleven use cases describe the system's behaviour from the actors' point of view.
+They are recorded in `use-cases.md`.
 
 | ID | Use case | Primary actor |
 |---|---|---|
-| UC-01 | Check student completion status | Student |
-| UC-02 | View credit summary | Student |
-| UC-03 | View outstanding requirements | Student |
-| UC-04 | Access completion letter | Student |
-| UC-05 | Update academic record | Academic staff |
+| UC-01 | Authenticate user | Student |
+| UC-02 | Request completion letter | Student |
+| UC-03 | Verify completion status | System |
+| UC-04 | Confirm student clearance | Finance officer |
+| UC-05 | Approve or reject letter request | Registry officer |
+| UC-06 | Generate and issue digital letter | System |
+| UC-07 | Verify letter authenticity | External verifier |
+| UC-08 | Track request status | Student |
+| UC-09 | View credit summary | Student |
+| UC-10 | View outstanding requirements | Student |
+| UC-11 | Update academic record | Academic staff |
 
-UC-01 to UC-03 are read-only enquiries against the assessment logic. UC-04 is the
-core workflow of the system and is the use case modelled in Section 9.3. UC-05 is
-the staff-side counterpart that makes re-assessment possible: when a record is
-updated, a student previously found ineligible may become eligible.
+UC-02 is the core workflow of the system and is the use case modelled in
+Section 9.3; it spans the student's request through verification (UC-03),
+approval (UC-05) and issuance (UC-06). UC-09 and UC-10 are read-only enquiries
+against the same assessment logic, and UC-08 lets a student follow a request
+already submitted. UC-11 is the staff-side counterpart that makes re-assessment
+possible: when a record is updated, a student previously found ineligible may
+become eligible. UC-07 serves the external verifier, who holds no account and
+interacts only through a verification code.
 
 Each use case carries alternative flows for its important exceptional outcomes.
-UC-01 handles a student with outstanding credits; UC-02 handles an academic
-record that cannot be retrieved; UC-03 handles the case where nothing is
-outstanding. These alternatives are reflected in the behavioural models.
+UC-03 handles an academic record that cannot be retrieved; UC-05 handles
+rejection with a recorded reason; UC-07 handles an unknown verification code;
+UC-10 handles the case where nothing is outstanding. These alternatives are
+reflected in the behavioural models.
+
+**Open item.** UC-04 introduces a financial clearance step performed by a
+Finance Officer, and step 4 of UC-02 depends on it. No requirement in FR-01 to
+FR-15 covers financial clearance, and Section 4.2 places the calculation of
+tuition fees out of scope. This use case therefore has no requirement behind it
+and is listed in Section 11 as unresolved.
 
 ## 8.1 Acceptance criteria
 
@@ -216,7 +234,7 @@ comparison.
 
 ## 9.3 Interaction model
 
-The sequence diagram (`models/sequence-core-use-case.mmd`) models UC-04 from the
+The sequence diagram (`models/sequence-core-use-case.mmd`) models UC-02 from the
 student's submission through to a delivered letter.
 
 The main flow proceeds: the student submits a request, which is recorded and
@@ -245,12 +263,12 @@ there it reaches `AwaitingApproval` when the check finds the student eligible, o
 `Refused` when it does not. An approved request becomes `LetterIssued` and then
 `Delivered`. Three exceptional outcomes are modelled: `VerificationFailed`, where
 the academic record cannot be retrieved and the check may be retried, taken from
-UC-02's alternative flow; `DeliveryFailed`, where delivery is not confirmed
+UC-03's alternative flow; `DeliveryFailed`, where delivery is not confirmed
 within the FR-12 window and is resent; and `Revoked`, where an issued letter is
 withdrawn and its verification code marked revoked.
 
 The transition from `Refused` back to `Submitted` is the one that connects this
-model to UC-05: when academic staff update a record, a student previously refused
+model to UC-11: when academic staff update a record, a student previously refused
 may request again. That loop is only representable because request state is held
 on `LetterRequest` rather than on `Student`.
 
@@ -311,6 +329,11 @@ currently associates `AuditEntry` only with `LetterRequest`. Either the model
 gains those associations or the audit responsibility is centralised on the
 request.
 
+**Use case for financial clearance.** UC-04, and step 4 of UC-02, depend on a
+financial clearance check that no requirement covers and that the project scope
+excludes. Either FR-16 is added to cover it, or the use case and that step are
+removed.
+
 **Unmerged branch content.** Stakeholder analysis material remains outside the
 default branch following the reverts of pull requests #11 and #12, and the
 Laboratory 2 problem documentation is still awaiting merge.
@@ -321,7 +344,7 @@ Laboratory 2 problem documentation is still awaiting merge.
 |---|---|
 | Functional requirements FR-01 to FR-15 | `requirements.md` |
 | Actors and actor goals | `docs/actors.md` |
-| Use cases UC-01 to UC-05 | `docs/use cases/` |
+| Use cases UC-01 to UC-11 | `use-cases.md` |
 | Acceptance criteria | `docs/use cases/acceptance-criteria.md` |
 | Quality scenarios | `docs/use cases/quality-scenarios.md` |
 | Domain model | `models/domain-model.mmd`, `.svg` |
