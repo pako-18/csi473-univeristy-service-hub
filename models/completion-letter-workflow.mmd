@@ -1,0 +1,41 @@
+---
+title: Completion letter workflow (UC-02)
+---
+flowchart TB
+    A["Student submits letter request<br/>UC-02, FR-11"] --> B["Retrieve enrolment and course results<br/>FR-02"]
+    B --> C{"Record retrievable?"}
+    C -->|No| C1["Show error, no letter issued<br/>UC-03 A2 / state VerificationFailed"]
+    C1 --> C2{"Retry available?"}
+    C2 -->|Yes| B
+    C2 -->|No| Z1(["Request cancelled"])
+
+    C -->|Yes| D["Run completion check against<br/>programme requirements<br/>FR-03, FR-04, FR-05, FR-06"]
+    D --> E{"Eligible?<br/>FR-08"}
+
+    E -->|No| F["Record refusal with itemised<br/>outstanding requirements<br/>FR-07, FR-10 / state Refused"]
+    F --> F1["Notify student"]
+    F1 --> F2{"Academic staff update record?<br/>UC-11, FR-09"}
+    F2 -->|Yes| A
+    F2 -->|No| Z2(["Request closed"])
+
+    E -->|Yes| G["Registry Officer reviews request<br/>UC-05, FR-09 / state AwaitingApproval"]
+    G --> H{"Approved?<br/>FR-10"}
+    H -->|No| F
+    H -->|Yes| I["Generate letter from template<br/>and issue verification code<br/>FR-11, FR-13 / state LetterIssued"]
+    I --> J["Deliver to institutional email<br/>FR-12"]
+    J --> K{"Delivery confirmed?"}
+    K -->|No| J
+    K -->|Yes| L(["Letter delivered<br/>state Delivered"])
+
+    I -.->|"audit entry"| M[["Audit trail<br/>FR-15"]]
+    H -.->|"audit entry"| M
+    L -.->|"verifiable by external party<br/>UC-07, FR-14"| N[["Verification service"]]
+
+    classDef ok fill:#e8f4ea,stroke:#2d6a4f,color:#1b4332
+    classDef bad fill:#fdeceb,stroke:#9b2c2c,color:#742a2a
+    classDef dec fill:#fdf3e2,stroke:#975a16,color:#744210
+    classDef done fill:#eae8fd,stroke:#4c3d99,color:#2d2470
+    class B,D,G,I,J ok
+    class C1,F,F1 bad
+    class C,C2,E,F2,H,K dec
+    class L,Z1,Z2 done
