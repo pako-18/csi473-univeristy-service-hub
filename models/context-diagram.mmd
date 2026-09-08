@@ -1,0 +1,31 @@
+---
+title: System context - Student Completion Verification and Digital Letter Issuance System
+---
+flowchart TB
+    STU["Student<br/><i>Requests letter, tracks status</i><br/>UC-02, UC-08, UC-09, UC-10"]
+    STAFF["Academic Staff<br/><i>Updates academic results</i><br/>UC-11, FR-09"]
+    RO["Registry Officer<br/><i>Approves or rejects requests</i><br/>UC-05, FR-10"]
+
+    subgraph SYS["Completion Verification and Letter Issuance System"]
+        CORE["Verifies programme requirements,<br/>issues digital letters,<br/>answers verification enquiries"]
+    end
+
+    EXT["External Verifier<br/><i>Confirms letter authenticity</i><br/>UC-07, FR-14"]
+    MAIL["Institutional Email Service<br/><i>Delivers issued letters</i><br/>FR-12"]
+
+    STU -->|"submits request, views status"| SYS
+    SYS -->|"eligibility, outstanding items"| STU
+    STAFF -->|"result updates"| SYS
+    RO -->|"approval decision"| SYS
+    SYS -->|"pending requests"| RO
+    EXT -->|"verification code"| SYS
+    SYS -->|"authenticity response"| EXT
+    SYS -->|"completion letter"| MAIL
+    MAIL -->|"delivery confirmation"| SYS
+
+    classDef actor fill:#e8f4ea,stroke:#2d6a4f,color:#1b4332
+    classDef ext fill:#fdf0e9,stroke:#9c4221,color:#7b341e
+    classDef sys fill:#eae8fd,stroke:#4c3d99,color:#2d2470
+    class STU,STAFF,RO actor
+    class EXT,MAIL ext
+    class CORE sys

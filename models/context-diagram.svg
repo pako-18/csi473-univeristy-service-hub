@@ -1,0 +1,78 @@
+<svg viewBox="0 0 1000 700" xmlns="http://www.w3.org/2000/svg" font-family="Arial, sans-serif">
+  <rect width="1000" height="700" fill="#ffffff"/>
+
+  <!-- Title -->
+  <text x="500" y="40" font-size="24" font-weight="bold" text-anchor="middle" fill="#111111">Context Diagram</text>
+  <text x="500" y="65" font-size="15" text-anchor="middle" fill="#444444">Student Completion Verification and Digital Letter Issuance System</text>
+
+  <!-- Central system box -->
+  <rect x="350" y="290" width="300" height="120" rx="10" fill="#1f6feb" stroke="#0d3f8a" stroke-width="2"/>
+  <text x="500" y="345" font-size="16" font-weight="bold" text-anchor="middle" fill="#ffffff">Student Completion</text>
+  <text x="500" y="365" font-size="16" font-weight="bold" text-anchor="middle" fill="#ffffff">Verification &amp; Letter</text>
+  <text x="500" y="385" font-size="16" font-weight="bold" text-anchor="middle" fill="#ffffff">Issuance System</text>
+
+  <!-- Entity: Student (top left) -->
+  <rect x="60" y="60" width="220" height="70" rx="8" fill="#f6f8fa" stroke="#333333" stroke-width="1.5"/>
+  <text x="170" y="102" font-size="15" font-weight="bold" text-anchor="middle" fill="#111111">Student</text>
+
+  <!-- Entity: Academic Departments (top right) -->
+  <rect x="720" y="60" width="220" height="70" rx="8" fill="#f6f8fa" stroke="#333333" stroke-width="1.5"/>
+  <text x="830" y="95" font-size="15" font-weight="bold" text-anchor="middle" fill="#111111">Academic</text>
+  <text x="830" y="115" font-size="15" font-weight="bold" text-anchor="middle" fill="#111111">Departments</text>
+
+  <!-- Entity: Faculty/Programme Admin (right) -->
+  <rect x="740" y="315" width="220" height="70" rx="8" fill="#f6f8fa" stroke="#333333" stroke-width="1.5"/>
+  <text x="850" y="345" font-size="14" font-weight="bold" text-anchor="middle" fill="#111111">Faculty / Programme</text>
+  <text x="850" y="365" font-size="14" font-weight="bold" text-anchor="middle" fill="#111111">Administration</text>
+
+  <!-- Entity: Examinations/Records Office (bottom right) -->
+  <rect x="720" y="570" width="220" height="70" rx="8" fill="#f6f8fa" stroke="#333333" stroke-width="1.5"/>
+  <text x="830" y="602" font-size="14" font-weight="bold" text-anchor="middle" fill="#111111">Examinations /</text>
+  <text x="830" y="622" font-size="14" font-weight="bold" text-anchor="middle" fill="#111111">Records Office</text>
+
+  <!-- Entity: University Management (bottom left) -->
+  <rect x="60" y="570" width="220" height="70" rx="8" fill="#f6f8fa" stroke="#333333" stroke-width="1.5"/>
+  <text x="170" y="602" font-size="14" font-weight="bold" text-anchor="middle" fill="#111111">University</text>
+  <text x="170" y="622" font-size="14" font-weight="bold" text-anchor="middle" fill="#111111">Management</text>
+
+  <!-- Entity: IT/System Admin (left) -->
+  <rect x="40" y="315" width="220" height="70" rx="8" fill="#f6f8fa" stroke="#333333" stroke-width="1.5"/>
+  <text x="150" y="345" font-size="14" font-weight="bold" text-anchor="middle" fill="#111111">IT / System</text>
+  <text x="150" y="365" font-size="14" font-weight="bold" text-anchor="middle" fill="#111111">Administrator</text>
+
+  <!-- Arrows -->
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#333333"/>
+    </marker>
+  </defs>
+
+  <!-- Student <-> System -->
+  <line x1="230" y1="130" x2="400" y2="290" stroke="#333333" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <text x="235" y="200" font-size="11" fill="#333333">Request for completion letter</text>
+  <line x1="400" y1="310" x2="230" y2="150" stroke="#333333" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <text x="235" y="230" font-size="11" fill="#333333">Digital letter / outstanding list</text>
+
+  <!-- Academic Departments <-> System -->
+  <line x1="770" y1="130" x2="600" y2="290" stroke="#333333" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <text x="640" y="200" font-size="11" fill="#333333">Programme requirements</text>
+
+  <!-- Faculty Admin <-> System -->
+  <line x1="740" y1="345" x2="650" y2="345" stroke="#333333" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <text x="655" y="335" font-size="11" fill="#333333">Approval / review</text>
+  <line x1="650" y1="365" x2="740" y2="365" stroke="#333333" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <text x="655" y="390" font-size="11" fill="#333333">Verification report</text>
+
+  <!-- Examinations Office <-> System -->
+  <line x1="770" y1="570" x2="600" y2="410" stroke="#333333" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <text x="640" y="480" font-size="11" fill="#333333">Academic credit records</text>
+
+  <!-- University Management <-> System -->
+  <line x1="230" y1="570" x2="400" y2="410" stroke="#333333" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <text x="240" y="480" font-size="11" fill="#333333">Completion reports</text>
+
+  <!-- IT Admin <-> System -->
+  <line x1="260" y1="345" x2="350" y2="345" stroke="#333333" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <text x="255" y="335" font-size="11" fill="#333333">Maintenance / access</text>
+
+</svg>
