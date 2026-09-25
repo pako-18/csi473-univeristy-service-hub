@@ -16,29 +16,35 @@ responsibilities in `models/domain-model.mmd` and `docs/crc-cards.md`.
 | FR-06 | Check elective requirements are met | UC-03 | CompletionRequirement — required credits | Unit test at elective threshold boundary |
 | FR-07 | Itemise outstanding requirements | UC-10 | CompletionCheck — records unmet requirements individually | Test: response lists each unmet item, not a single flag |
 | FR-08 | Derive eligibility status without manual input | UC-03 | CompletionCheck — `determineOutcome()` | Integration test: outcome produced with no staff action |
-| FR-09 | Authorised staff update academic results | UC-11 | Enrolment — accepts updates from authorised staff only | Test with authorised and unauthorised users per UC-11 A2 |
+| FR-09 | Authorised staff review a completion assessment | UC-05 | CompletionCheck — outcome and unmet requirements; RegistryOfficer | Test: staff role sees full assessment; student role is refused |
 | FR-10 | Staff approve or reject, with timestamp | UC-05 | ApprovalDecision — decision, decidedOn, reason, RegistryOfficer | Test both outcomes; assert decision persists after rejection |
 | FR-11 | Generate letter on approval | UC-06 | CompletionLetter; LetterTemplate | Test: letter produced only after approving ApprovalDecision |
 | FR-12 | Deliver letter to institutional email | UC-02, UC-06 | CompletionLetter — delivery; LetterRequest state Delivered | Test delivery confirmation and the DeliveryFailed retry path |
 | FR-13 | Unique verification code bound to each letter | UC-06 | VerificationCode — composed by CompletionLetter | Test: codes unique across letters; code inseparable from letter |
 | FR-14 | External party verifies a letter by code | UC-07 | VerificationCode; VerificationRequest | Test valid, revoked and unknown codes per UC-07 A2 |
-| FR-15 | Audit trail of approvals, issuance and verification | UC-05, UC-06, UC-07 | AuditEntry | Test: entry written for each of the three actions, with actor |
+| FR-15 | Audit trail of approvals, issuance and verification | UC-05, UC-06, UC-07 | AuditEntry — linked to ApprovalDecision, CompletionLetter, VerificationRequest | Test: entry written for each of the three actions, with actor |
 
 ## Coverage notes
 
 Every requirement FR-01 to FR-15 maps to at least one use case, one analysis
 element and one planned verification.
 
-UC-04 (Confirm Student Clearance) does not appear in this matrix. No requirement
-covers financial clearance, and the project scope excludes tuition fee
-calculation. This is recorded as an open item in `use-cases.md` and in Section 11
-of the Phase 1 report.
+UC-04 (Confirm Student Clearance) was **withdrawn** in the Phase 1 review
+(finding F-01) because no requirement covered it and it was outside scope.
+
+**Corrected in Phase 1 review (F-02):** FR-09 was previously described here as
+"staff update academic results" and traced to UC-11. `requirements.md` defines
+FR-09 as staff *reviewing* a completion assessment, so it now traces to UC-05.
+
+UC-11 (Update Academic Record) has no requirement of its own after the FR-09
+correction. It supports re-assessment (the `Refused → Submitted` transition) and
+is kept; a requirement (FR-16) is proposed for Phase 2.
 
 UC-08 (Track Request Status) has no requirement of its own. It is satisfied by
 the request history that FR-10 and FR-12 make possible, but a requirement should
 be added if it is to be assessed independently.
 
-FR-15 requires `AuditEntry` to record approvals, letter generation and
-verification attempts. The domain model currently associates `AuditEntry` only
-with `LetterRequest`, so the associations from `ApprovalDecision`,
-`CompletionLetter` and `VerificationCode` are outstanding.
+**Corrected in Phase 1 review (F-03):** the domain model now associates
+`AuditEntry` with `ApprovalDecision`, `CompletionLetter` and
+`VerificationRequest`, as well as `LetterRequest`, so every FR-15 action has a
+modelled audit link.

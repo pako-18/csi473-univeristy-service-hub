@@ -32,10 +32,10 @@ Programme
 CourseResult
 CompletionCheck
 
-Card 3: Completion Check
+Card 3: CompletionCheck
 
 Class
-Completion Check
+CompletionCheck
 
 Responsibilities
 Checks the student's course results against what the programme actually requires
@@ -47,7 +47,7 @@ Records when the check was done
 
 
 Collaborators
--Enrolmemt
+-Enrolment
 -Programme
 -CompletionRequirement
 -LetterRequest
@@ -108,7 +108,7 @@ Collaborators:
 Programme
 CompletionCheck
 
-Card 7:CompletionLetter
+Card 7: CompletionLetter
 
 Class
 CompletionLetter
@@ -125,3 +125,72 @@ Collaborators:
 LetterRequest
 LetterTemplate
 VerificationCode
+
+
+Card 8: ApprovalDecision
+
+Class
+ApprovalDecision
+
+Responsibilities:
+
+Records whether a request was approved or rejected (FR-10)
+Records the date of the decision and the reason given
+Knows which RegistryOfficer made the decision
+Records a refusal even when no letter is produced (D-002 Decision 4)
+
+Collaborators:
+
+LetterRequest
+RegistryOfficer
+AuditEntry
+
+Card 9: RegistryOfficer
+
+Class
+RegistryOfficer
+
+Responsibilities:
+
+Reviews the completion assessment of a pending request (FR-09)
+Approves or rejects the request with a reason (FR-10)
+
+Collaborators:
+
+ApprovalDecision
+LetterRequest
+CompletionCheck
+
+Card 10: VerificationCode
+
+Class
+VerificationCode
+
+Responsibilities:
+
+Holds a unique, non-guessable code for one letter (FR-13)
+Knows when it was issued and whether it has been revoked
+Answers verification requests from external parties (FR-14)
+
+Collaborators:
+
+CompletionLetter
+VerificationRequest
+
+Card 11: AuditEntry
+
+Class
+AuditEntry
+
+Responsibilities:
+
+Records when an action happened, what it was and who performed it (FR-15)
+Covers approvals, letter generation and verification attempts
+Cannot be changed once written
+
+Collaborators:
+
+LetterRequest
+ApprovalDecision
+CompletionLetter
+VerificationRequest

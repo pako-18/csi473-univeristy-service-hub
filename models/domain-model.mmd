@@ -88,3 +88,6 @@ classDiagram
     CompletionLetter "1" *-- "1" VerificationCode : carries
     VerificationCode "1" -- "0..*" VerificationRequest : answers
     LetterRequest "1" -- "0..*" AuditEntry : logs
+    ApprovalDecision "1" -- "1" AuditEntry : audited by
+    CompletionLetter "1" -- "1..*" AuditEntry : audited by
+    VerificationRequest "1" -- "1" AuditEntry : audited by

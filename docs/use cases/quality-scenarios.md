@@ -1,8 +1,8 @@
-Quality Scenarios
+# Quality Scenarios
 
-## Student Credit Completion System
+## Student Completion Verification and Digital Letter Issuance System
 
-### Quality Scenario 1 — Completion Status Response Time
+### QS-1 — Completion Status Response Time
 
 **Stimulus:**  
 A student requests their completion status.
@@ -16,7 +16,7 @@ The system calculates the student's completed credits, checks the programme requ
 **Response Measure:**  
 The completion status should be displayed within 3 seconds of the student's request.
 
-### Quality Scenario 2 — Credit Calculation Accuracy
+### QS-2 — Credit Calculation Accuracy
 
 **Stimulus:**  
 A student requests their completed credit total.
@@ -30,7 +30,7 @@ The system calculates the total number of completed credits using the student's 
 **Response Measure:**  
 The calculated credit total shall exactly match the sum of the credits assigned to the student's completed modules.
 
-### Quality Scenario-003 — Unauthorised Access
+### QS-3 — Unauthorised Access
 
 **Stimulus:**  
 An unauthorised user attempts to access a student's academic record.
@@ -44,10 +44,10 @@ The system denies access to the student's academic record and completion informa
 **Response Measure:**  
 The system shall display no protected student academic information to the unauthorised user.
 
-### Quality Scenario 4 — System Availability
+### QS-4 — System Availability
 
 **Stimulus:**  
-A student attempts to access the Student Credit Completion System.
+A student attempts to access the system.
 
 **Context:**  
 The request occurs during the university's scheduled operating hours.
@@ -58,7 +58,7 @@ The system allows the student to access the completion-status functionality.
 **Response Measure:**  
 The system should be available at least 99% of the time during scheduled operating hours.
 
-### Quality Scenario 5 — Completion Letter Generation Reliability
+### QS-5 — Completion Letter Generation Reliability
 
 **Stimulus:**  
 A student who has satisfied all programme requirements requests their completion status.

@@ -1,7 +1,7 @@
 ---
 title: "Phase 1 Report — Student Completion Verification and Digital Letter Issuance System"
 subtitle: "CSI473 Software Engineering · Semester 1, 2026/27 · University of Botswana"
-date: "Draft — Laboratory 5"
+date: "Final submission — Assignment 2, Project Phase 1 (Team NN)"
 ---
 
 # 1. Introduction
@@ -14,8 +14,9 @@ account of one system rather than as a set of independent artefacts.
 
 Each model in this report is accompanied by an explanation of what it shows, the
 requirement it serves, and the reasoning behind the choices made in it.
-Section 10 records the design decisions taken during domain analysis, and
-Section 11 records the inconsistencies still open at the time of this draft.
+Section 10 records the design decisions taken during domain analysis.
+Section 11 records the outcome of the final consistency review, and Section 12
+introduces the architecture drivers carried into Phase 2.
 
 # 2. Problem statement
 
@@ -84,8 +85,9 @@ Four risks are carried into design. The system could incorrectly classify a
 student as complete or incomplete; unauthorised parties could gain access to
 student records; the system could be unavailable when a student needs a letter;
 and records could be lost through technical failure. The first is addressed by
-the eligibility rules in Section 9, the second by the authentication requirement
-FR-01, and the third by Quality Scenario 4.
+the eligibility rules in Section 9 and QS-2, the second by the authentication
+requirement FR-01 and QS-3, the third by QS-4, and the fourth by QS-5 and the
+audit trail (FR-15).
 
 # 5. Stakeholders and actors
 
@@ -139,7 +141,8 @@ what allows the system to reduce delay rather than merely relocate it.
 
 # 7. Quality scenarios
 
-Four quality scenarios constrain the design beyond its functional behaviour.
+Five quality scenarios (QS-1 to QS-5, `docs/use cases/quality-scenarios.md`)
+constrain the design beyond its functional behaviour.
 
 **Response time.** A student requesting their completion status under normal
 usage should see it within three seconds.
@@ -154,17 +157,20 @@ reach a student's academic record must be shown no protected information.
 **Availability.** The system should be available at least 99% of the time during
 the university's scheduled operating hours.
 
+**Letter generation reliability.** At least 99% of valid completion requests
+should successfully produce a completion letter.
+
 # 8. Use cases
 
-Eleven use cases describe the system's behaviour from the actors' point of view.
-They are recorded in `use-cases.md`.
+Eleven use case identifiers were defined; UC-04 was withdrawn in the final review
+(Section 11), leaving ten active use cases. They are recorded in `use-cases.md`.
 
 | ID | Use case | Primary actor |
 |---|---|---|
 | UC-01 | Authenticate user | Student |
 | UC-02 | Request completion letter | Student |
 | UC-03 | Verify completion status | System |
-| UC-04 | Confirm student clearance | Finance officer |
+| ~~UC-04~~ | ~~Confirm student clearance~~ (withdrawn) | — |
 | UC-05 | Approve or reject letter request | Registry officer |
 | UC-06 | Generate and issue digital letter | System |
 | UC-07 | Verify letter authenticity | External verifier |
@@ -188,11 +194,10 @@ rejection with a recorded reason; UC-07 handles an unknown verification code;
 UC-10 handles the case where nothing is outstanding. These alternatives are
 reflected in the behavioural models.
 
-**Open item.** UC-04 introduces a financial clearance step performed by a
-Finance Officer, and step 4 of UC-02 depends on it. No requirement in FR-01 to
-FR-15 covers financial clearance, and Section 4.2 places the calculation of
-tuition fees out of scope. This use case therefore has no requirement behind it
-and is listed in Section 11 as unresolved.
+**Resolved in final review.** UC-04 introduced a financial clearance step that no
+requirement covered and that Section 4.2 places out of scope. It has been
+withdrawn, together with step 4 of UC-02; the identifier is retired rather than
+reused so that other use case numbers remain stable.
 
 ## 8.1 Acceptance criteria
 
@@ -215,7 +220,11 @@ an enrolment against its programme's requirements. A `LetterRequest` triggers a
 check, is resolved by an `ApprovalDecision` made by a `RegistryOfficer`, and may
 produce a `CompletionLetter`. Each letter carries a `VerificationCode`, which
 answers `VerificationRequest` enquiries from external parties. `AuditEntry`
-records actions taken against a request.
+records actions taken against a request, and is also linked to each
+`ApprovalDecision`, `CompletionLetter` and `VerificationRequest` so that every
+action required by FR-15 has a modelled audit record.
+
+![Domain model (`models/domain-model.mmd`)](../models/domain-model.svg)
 
 Three modelling choices in this diagram are argued in Section 10: why
 `LetterRequest` is a class rather than a status field, why `CompletionCheck`
@@ -235,7 +244,13 @@ comparison.
 ## 9.3 Interaction model
 
 The sequence diagram (`models/sequence-core-use-case.mmd`) models UC-02 from the
-student's submission through to a delivered letter.
+student's submission through to a delivered letter. Its scope is deliberately
+limited to UC-02 and its alternative branches (record not active, not eligible,
+officer rejects). The record-unavailable case (UC-03 A2) is modelled in the
+lifecycle as `VerificationFailed`, and the unknown-code case (UC-07 A2) belongs to
+a separate interaction outside this diagram.
+
+![Sequence diagram, UC-02 (`models/sequence-core-use-case.mmd`)](../models/sequence-core-use-case.svg)
 
 The main flow proceeds: the student submits a request, which is recorded and
 audited; the request triggers a `CompletionCheck`; the check obtains completed
@@ -272,6 +287,8 @@ model to UC-11: when academic staff update a record, a student previously refuse
 may request again. That loop is only representable because request state is held
 on `LetterRequest` rather than on `Student`.
 
+![LetterRequest lifecycle (`models/lifecycle-letter-request.mmd`)](../models/lifecycle-letter-request.svg)
+
 # 10. Design decisions
 
 Four domain-modelling decisions are recorded in full in `decisions/D-002.md`,
@@ -302,43 +319,44 @@ require an attributable, timestamped decision. Holding the outcome as attributes
 on the request would leave the deciding officer without a modelled relationship.
 The cost accepted is one more class and two more associations.
 
-# 11. Consistency and open items
+# 11. Final consistency review
 
-This draft is submitted with the following inconsistencies identified but not yet
-resolved. They are recorded here rather than concealed, since resolving them is
-the purpose of the Phase 1 review.
+The team applied the Phase 1 rubric to the full baseline
+(`docs/phase1-review-checklist.md`) and ran a consistency review across the use
+cases, domain model, sequence and lifecycle models, CRC cards and traceability
+matrix (`docs/consistency-matrix.md`). The three highest-risk findings and their
+corrections are:
 
-**Vocabulary divergence between the CRC cards and the domain model.** The CRC
-cards as currently committed use `Academic Record`, `Module`, `Module Result`,
-`Academic Staff` and `Programme Requirement`. The domain model uses `Enrolment`,
-`CourseResult`, `RegistryOfficer` and `CompletionRequirement`. Only `Student` and
-`CompletionLetter` appear in both. A revised set of cards using the domain model
-vocabulary has been prepared and is awaiting team agreement.
+| ID | Finding | Correction | Artefacts updated |
+|---|---|---|---|
+| F-01 | UC-04 and step 4 of UC-02 required financial clearance, which no requirement covered and which is out of scope (C-01) | UC-04 withdrawn; step 4 and alternative A4 removed from UC-02; UC-05 precondition updated | `use-cases.md`, `docs/consistency-matrix.md`, `docs/traceability-matrix.md`, this report §8 |
+| F-02 | The traceability matrix described FR-09 as "staff update records" (UC-11), contradicting `requirements.md`, where FR-09 is staff review of an assessment | FR-09 re-traced to UC-05; lifecycle label corrected | `docs/traceability-matrix.md`, `models/lifecycle-letter-request.mmd` |
+| F-03 | FR-15 audit actions had no modelled link from `ApprovalDecision`, `CompletionLetter` or `VerificationRequest` (C-02) | Three associations added to `AuditEntry` | `models/domain-model.mmd` / `.svg`, `docs/crc-cards.md` |
 
-**Two requirements files.** `requirements.md` holds the canonical FR-01 to FR-15
-table; `docs/requirements.md` holds an earlier draft of ten unnumbered
-statements. The earlier draft should be removed.
+Further corrections: CRC cards now use the domain-model vocabulary, with cards
+added for `ApprovalDecision`, `RegistryOfficer`, `VerificationCode` and
+`AuditEntry` (C-03). Duplicate early drafts of requirements and use cases were
+moved to `docs/archive/`. Section 7 now lists all five quality scenarios, and
+the scope of the sequence diagram is stated explicitly (C-05).
 
-**Empty traceability matrix.** `docs/use cases/traceability-matrix.md` exists but
-has no content. The requirement-to-verification mapping required by Laboratory 4
-is therefore outstanding.
+**Items knowingly carried into Phase 2:**
 
-**Audit associations.** The sequence diagram shows `ApprovalDecision` and
-`CompletionLetter` writing to `AuditEntry`, as FR-15 requires. The domain model
-currently associates `AuditEntry` only with `LetterRequest`. Either the model
-gains those associations or the audit responsibility is centralised on the
-request.
+- UC-08 (Track request status) and UC-11 (Update academic record) have no
+  requirement of their own; FR-16 and FR-17 are proposed.
+- Stakeholder-analysis material on unmerged branches (following the reverts of
+  pull requests #11 and #12) is not part of this baseline.
 
-**Use case for financial clearance.** UC-04, and step 4 of UC-02, depend on a
-financial clearance check that no requirement covers and that the project scope
-excludes. Either FR-16 is added to cover it, or the use case and that step are
-removed.
+# 12. Transition to Phase 2: architecture drivers
 
-**Unmerged branch content.** Stakeholder analysis material remains outside the
-default branch following the reverts of pull requests #11 and #12, and the
-Laboratory 2 problem documentation is still awaiting merge.
+Three drivers taken from the quality scenarios and constraints will shape the
+architecture: **correctness** of the eligibility outcome (QS-2), **security and
+authenticity** of records and letters (QS-3, FR-13, FR-14), and **availability
+and reliability** of issuance (QS-4, QS-5), all within the one-semester team
+constraint. Two realistic alternatives, a layered modular monolith and
+event-driven microservices, are outlined in `docs/architecture-drivers.md` for
+evaluation in Laboratory 7.
 
-# 12. Evidence index
+# 13. Evidence index
 
 | Artefact | Location |
 |---|---|
@@ -350,6 +368,11 @@ Laboratory 2 problem documentation is still awaiting merge.
 | Domain model | `models/domain-model.mmd`, `.svg` |
 | Business rules | `docs/business-rules.md` |
 | Responsibility allocation | `docs/crc-cards.md` |
-| Sequence diagram (UC-04) | `models/sequence-core-use-case.mmd` |
+| Sequence diagram (UC-02) | `models/sequence-core-use-case.mmd` |
 | Lifecycle state machine | `models/lifecycle-letter-request.mmd` |
 | Domain modelling decisions | `decisions/D-002.md` |
+| Traceability matrix | `docs/traceability-matrix.md` |
+| Consistency matrix | `docs/consistency-matrix.md` |
+| Phase 1 review checklist | `docs/phase1-review-checklist.md` |
+| Architecture drivers (Phase 2) | `docs/architecture-drivers.md` |
+| Superseded drafts (not assessed) | `docs/archive/` |

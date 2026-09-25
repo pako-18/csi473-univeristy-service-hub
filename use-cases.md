@@ -18,7 +18,7 @@ Student Completion Verification and Digital Letter Issuance System
 ## UC-02: Request Completion Letter
 
 **Primary actor:** Student
-**Supporting actors:** Registry Officer, Finance Officer
+**Supporting actor:** Registry Officer
 **Precondition:** Student is authenticated and has an active record.
 **Postcondition:** A signed digital letter is issued, or the request is rejected with a stated reason.
 
@@ -26,16 +26,13 @@ Student Completion Verification and Digital Letter Issuance System
 1. Student submits a request for a completion letter.
 2. System validates the student record is active.
 3. System checks academic completion status.
-4. System checks financial clearance.
-5. Registry Officer reviews and approves the request.
-6. System generates the letter with a verification code.
-7. System notifies the Student that the letter is available.
+4. Registry Officer reviews and approves the request.
+5. System generates the letter with a verification code.
+6. System notifies the Student that the letter is available.
 
 **Alternative flow A3 - incomplete academic record**
 - At step 3, if outstanding results exist, the system rejects the request and records the reason. Student is notified.
 
-**Alternative flow A4 - outstanding financial obligation**
-- At step 4, if clearance fails, the request is held and the Student is notified of the outstanding item.
 
 ## UC-03: Verify Completion Status
 
@@ -53,24 +50,17 @@ Student Completion Verification and Digital Letter Issuance System
 **Alternative flow A2 - record unavailable**
 - At step 1, if the record cannot be retrieved, the request is flagged for manual review by the Faculty Officer.
 
-## UC-04: Confirm Student Clearance
+## UC-04: Confirm Student Clearance — WITHDRAWN (Phase 1 review, Lab 6)
 
-**Primary actor:** Finance Officer
-**Precondition:** Completion status has been confirmed.
-**Postcondition:** Clearance is granted or the request is held.
-
-**Main flow**
-1. System submits the student for clearance checking.
-2. Finance Officer reviews outstanding obligations.
-3. Finance Officer records the clearance decision.
-
-**Alternative flow A2 - outstanding balance**
-- At step 2, if obligations exist, clearance is refused and the reason is recorded.
+Withdrawn to resolve consistency issue C-01. No requirement in FR-01 to FR-15
+covers financial clearance, and Phase 1 scope (§4.2) places tuition fees out of
+scope. The identifier UC-04 is retired, not reused, so that UC-05 to UC-11 keep
+their numbers across all artefacts.
 
 ## UC-05: Approve or Reject Letter Request
 
 **Primary actor:** Registry Officer
-**Precondition:** Completion and clearance checks are complete.
+**Precondition:** The completion check has found the student eligible.
 **Postcondition:** The request is approved or rejected with a reason.
 
 **Main flow**
@@ -166,10 +156,8 @@ Student Completion Verification and Digital Letter Issuance System
 
 ---
 
-## Open item
+## Resolved item (Phase 1 review, Lab 6)
 
-UC-04 (Confirm Student Clearance) introduces a Finance Officer and a financial
-clearance step. No requirement in `requirements.md` (FR-01 to FR-15) covers
-financial clearance, and the project scope excludes the calculation of tuition
-fees. Either a requirement is added to justify this use case, or UC-04 and step 4
-of UC-02 are removed. This must be resolved before Phase 1 submission.
+UC-04 (Confirm Student Clearance) and step 4 of UC-02 were removed. No
+requirement covered financial clearance and it was outside the approved scope.
+See `docs/phase1-review-checklist.md`, finding F-01.

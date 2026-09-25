@@ -43,21 +43,32 @@ The main stakeholders identified for the system include:
 
 ## Repository Structure
 
-| Folder | Purpose |
+| Folder / file | Purpose |
 |---|---|
-| `glossary/` | Definitions of important project terms |
-| `decisions/` | Important project decisions and their rationale |
-| `models/` | System models and diagrams |
-| `prototype/` | System/interface prototypes |
-| `tests/` | Test cases and testing evidence |
-| `evidence/` | Evidence supporting the problem and design |
-| `submissions/` | Final submission materials |
-| `src/` | Source code for the system |
+| `requirements.md` | Functional requirements FR-01 to FR-15 (canonical) |
+| `use-cases.md` | Use cases UC-01 to UC-11 (UC-04 withdrawn) |
+| `docs/` | Actors, business rules, CRC cards, traceability and consistency matrices, review checklist, architecture drivers |
+| `docs/use cases/` | Quality scenarios (QS-1 to QS-5) and acceptance criteria |
+| `docs/archive/` | Superseded early drafts, not part of the assessed baseline |
+| `models/` | Editable Mermaid sources (`.mmd`) and SVG exports of all models |
+| `decisions/` | Decision records (D-002 domain modelling) |
+| `submissions/` | Phase 1 report source (`phase1-report.md`) and submitted PDF |
+
+## Phase 1 Submission
+
+- **Tag:** `phase1-submission`. Run `git checkout phase1-submission` to see
+  exactly what was submitted.
+- **Submitted PDF:** `submissions/CSI473_A2_Phase1_TeamNN.pdf`
+- **Report source:** `submissions/phase1-report.md`
+- **Model sources → exports:** `models/*.mmd` → `models/*.svg`. Regenerate an
+  export with
+  `npx -p @mermaid-js/mermaid-cli mmdc -i models/<name>.mmd -o models/<name>.svg`
+- **Review record:** `docs/phase1-review-checklist.md`
 
 ## Team
 
-This project is being developed as a group for CSI473 Software Design.
+This project is being developed as a group for CSI473 Software Engineering.
 
 ## Project Status
 
-**Current stage:** Requirements analysis and system design.
+**Current stage:** Phase 1 (requirements and analysis) submitted; Phase 2 (architecture and design) in progress.
