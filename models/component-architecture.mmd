@@ -1,6 +1,5 @@
 flowchart TB
     Student([Student])
-    Officer([Registry Officer])
     Verifier([Public Verifier])
 
     subgraph App["Web Application - one deployable unit"]
@@ -31,7 +30,6 @@ flowchart TB
     Email["Email server"]
 
     Student --> WebUI
-    Officer --> WebUI
     Verifier --> PublicRoute
 
     WebUI -->|"authorise()"| Identity
@@ -59,4 +57,4 @@ flowchart TB
     Outbox -.->|"failure boundary: retries"| Email
 
     classDef external stroke-dasharray: 5 5
-    class Records,Email external
+    class Records,Email external 
