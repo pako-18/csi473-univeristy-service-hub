@@ -1,0 +1,62 @@
+flowchart TB
+    Student([Student])
+    Officer([Registry Officer])
+    Verifier([Public Verifier])
+
+    subgraph App["Web Application - one deployable unit"]
+        subgraph Pres["Presentation layer"]
+            WebUI["Authenticated Web UI and API"]
+            PublicRoute["Public Verification route"]
+        end
+
+        subgraph Mods["Application and domain modules"]
+            Identity["Identity<br/>login, roles, single access check"]
+            LetterReq["Letter Requests<br/>request lifecycle"]
+            Elig["Eligibility<br/>credits and programme rules"]
+            Approvals["Approvals<br/>records the automatic decision"]
+            Issuance["Letter Issuance<br/>create letter, store, queue email"]
+            Verif["Verification<br/>public authenticity check"]
+            Audit["Audit<br/>append-only log"]
+        end
+
+        subgraph Infra["Infrastructure layer"]
+            Repo["Repositories<br/>one transaction per request"]
+            RecAdapter["Academic Record Adapter<br/>single read path, replaceable"]
+            Outbox["Email Outbox and retry worker"]
+        end
+    end
+
+    DB[("Relational database<br/>requests, decisions, letters,<br/>outbox, audit")]
+    Records["Academic record source<br/>test data in the prototype"]
+    Email["Email server"]
+
+    Student --> WebUI
+    Officer --> WebUI
+    Verifier --> PublicRoute
+
+    WebUI -->|"authorise()"| Identity
+    WebUI --> LetterReq
+    PublicRoute --> Verif
+
+    LetterReq --> Elig
+    LetterReq --> Approvals
+    LetterReq --> Issuance
+    Approvals --> Audit
+    Issuance --> Audit
+    Issuance --> Outbox
+
+    Elig --> RecAdapter
+    Identity --> Repo
+    LetterReq --> Repo
+    Approvals --> Repo
+    Issuance --> Repo
+    Verif -->|"read letters only"| Repo
+    Audit --> Repo
+    Outbox --> Repo
+
+    Repo --> DB
+    RecAdapter -.->|"failure boundary"| Records
+    Outbox -.->|"failure boundary: retries"| Email
+
+    classDef external stroke-dasharray: 5 5
+    class Records,Email external
