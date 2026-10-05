@@ -1,0 +1,40 @@
+flowchart TB
+    subgraph Internet["Internet - untrusted"]
+        Student(["Student<br/>web browser"])
+        Verifier(["Public verifier<br/>web browser"])
+    end
+
+    subgraph AppZone["Application zone - trust boundary 1"]
+        LB["Load balancer<br/>ends TLS, health checks,<br/>stops sending traffic to a failed node"]
+        subgraph Node1["Application node 1"]
+            Web1["Web application<br/>one deployable unit<br/>login routes and public verify route"]
+            Worker1["Email outbox worker"]
+        end
+        subgraph Node2["Application node 2 - identical copy"]
+            Web2["Web application<br/>same build as node 1"]
+            Worker2["Email outbox worker"]
+        end
+    end
+
+    subgraph DataZone["Data zone - trust boundary 2, no internet access"]
+        DB[("Relational database<br/>requests, checks, decisions, letters,<br/>verification codes, outbox, audit")]
+        Backup[("Backup storage<br/>scheduled backups, tested restore")]
+    end
+
+    subgraph External["External services - trust boundary 3, outside our control"]
+        Records[("Academic record source<br/>test data in the prototype<br/>read-only")]
+        Email["Email server - SMTP"]
+    end
+
+    Student -->|"HTTPS"| LB
+    Verifier -->|"HTTPS, public verify pages"| LB
+    LB --> Web1
+    LB --> Web2
+    Web1 & Web2 -->|"SQL over TLS, application account"| DB
+    Worker1 & Worker2 -->|"claim outbox rows with a row lock"| DB
+    Web1 & Web2 -.->|"Academic Record Adapter, read-only, timeout"| Records
+    Worker1 & Worker2 -.->|"SMTP over TLS, retries"| Email
+    DB -->|"scheduled copy"| Backup
+
+    classDef external stroke-dasharray: 5 5
+    class Records,Email external
