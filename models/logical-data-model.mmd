@@ -1,0 +1,141 @@
+erDiagram
+    %% Academic record tables: read-only test data, accessed only via the Academic Record Adapter
+    STUDENT ||--o{ ENROLMENT : holds
+    PROGRAMME ||--o{ ENROLMENT : governs
+    ENROLMENT ||--o{ COURSE_RESULT : records
+    PROGRAMME ||--|{ COMPLETION_REQUIREMENT : defines
+
+    %% Application-owned tables
+    ENROLMENT ||--o{ COMPLETION_CHECK : "assessed by"
+    COMPLETION_CHECK ||--|{ CHECK_REQUIREMENT_RESULT : evaluates
+    COMPLETION_REQUIREMENT ||--o{ CHECK_REQUIREMENT_RESULT : "judged in"
+    STUDENT ||--o{ LETTER_REQUEST : submits
+    LETTER_REQUEST |o--o| COMPLETION_CHECK : triggers
+    LETTER_REQUEST ||--o| APPROVAL_DECISION : "resolved by"
+    LETTER_REQUEST ||--o| COMPLETION_LETTER : produces
+    LETTER_TEMPLATE ||--o{ COMPLETION_LETTER : formats
+    COMPLETION_LETTER ||--|| VERIFICATION_CODE : carries
+    COMPLETION_LETTER ||--|| EMAIL_OUTBOX : "queued in"
+    VERIFICATION_CODE ||--o{ VERIFICATION_REQUEST : answers
+    REGISTRY_OFFICER |o--o{ COMPLETION_LETTER : revokes
+    LETTER_REQUEST |o--o{ AUDIT_ENTRY : logs
+    APPROVAL_DECISION ||--o| AUDIT_ENTRY : "audited by"
+    COMPLETION_LETTER ||--|{ AUDIT_ENTRY : "audited by"
+    VERIFICATION_REQUEST ||--o| AUDIT_ENTRY : "audited by"
+
+    STUDENT {
+        string student_number PK
+        string full_name
+        int admission_year
+        string institutional_email UK "needed for delivery FR-12"
+    }
+    PROGRAMME {
+        string programme_code PK
+        string title
+        string department
+        int minimum_credits "CHECK greater than 0"
+    }
+    ENROLMENT {
+        int enrolment_id PK
+        string student_number FK
+        string programme_code FK
+        date start_date
+        string status "ACTIVE or INACTIVE"
+    }
+    COURSE_RESULT {
+        int result_id PK
+        int enrolment_id FK
+        string course_code "UNIQUE with enrolment_id and academic_year"
+        string academic_year
+        string grade
+        int credits_earned "CHECK 0 or more"
+    }
+    COMPLETION_REQUIREMENT {
+        int requirement_id PK
+        string programme_code FK
+        string description
+        int required_credits
+        boolean is_mandatory
+        string course_code "NULL means overall credit total, set means compulsory module"
+    }
+    LETTER_REQUEST {
+        string reference_number PK
+        string student_number FK
+        string idempotency_key "UNIQUE with student_number, blocks duplicate submits"
+        datetime requested_on
+        string purpose
+        string status "CHECK in lifecycle states"
+    }
+    COMPLETION_CHECK {
+        int check_id PK
+        int enrolment_id FK
+        string reference_number FK "UNIQUE, NULL when student only views status"
+        datetime checked_on
+        string outcome "ELIGIBLE or NOT_ELIGIBLE"
+    }
+    CHECK_REQUIREMENT_RESULT {
+        int check_id PK, FK
+        int requirement_id PK, FK
+        boolean is_met
+        int achieved_value "snapshot at check time"
+    }
+    APPROVAL_DECISION {
+        int decision_id PK
+        string reference_number FK "UNIQUE"
+        string decision "APPROVED or REJECTED, made automatically"
+        string reason
+        datetime decided_on
+    }
+    LETTER_TEMPLATE {
+        string template_code PK
+        int version PK
+        text body_text
+    }
+    COMPLETION_LETTER {
+        string letter_number PK
+        string reference_number FK "UNIQUE"
+        string template_code FK
+        int template_version FK
+        date issued_on
+        date valid_until
+        string revoked_by FK "NULL unless revoked"
+        datetime revoked_on
+    }
+    VERIFICATION_CODE {
+        string code PK "random, unguessable"
+        string letter_number FK "UNIQUE"
+        date issued_on
+        boolean is_revoked
+    }
+    VERIFICATION_REQUEST {
+        int verification_id PK
+        string code FK
+        datetime requested_on
+        string verifier_name
+        string verifier_organisation
+        string outcome
+    }
+    EMAIL_OUTBOX {
+        int outbox_id PK
+        string letter_number FK "UNIQUE"
+        string recipient_email
+        string status "PENDING, SENT or FAILED"
+        int attempts
+        datetime next_attempt_at
+        string last_error
+        datetime sent_at
+    }
+    REGISTRY_OFFICER {
+        string staff_number PK
+        string full_name
+    }
+    AUDIT_ENTRY {
+        int audit_id PK
+        datetime occurred_at
+        string action
+        string actor "student number, staff number or SYSTEM"
+        string reference_number FK
+        int decision_id FK "UNIQUE"
+        string letter_number FK
+        int verification_id FK "UNIQUE"
+    }
