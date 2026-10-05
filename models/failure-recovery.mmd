@@ -1,0 +1,23 @@
+sequenceDiagram
+    autonumber
+    participant W as Outbox worker
+    participant DB as Database
+    participant M as Email server
+
+    Note over DB: Letter, code, outbox row and audit entry were saved together. Outbox status is PENDING.
+    W->>DB: claim one due PENDING row with a row lock
+    DB-->>W: outbox row and letter details
+    W->>M: send letter email with a timeout
+    alt email accepted
+        M-->>W: accepted
+        W->>DB: outbox SENT, request Delivered, audit entry in one transaction
+    else server down or timeout
+        W->>DB: attempts + 1, save last_error, set next_attempt_at using backoff
+        Note over DB: Letter and verification code stay valid. The student already has the letter details.
+        W->>DB: later, claim the same row again when it is due
+        W->>M: send letter email again
+        alt retry limit reached
+            W->>DB: outbox FAILED, request DeliveryFailed, audit entry
+            Note over DB: Staff are alerted. A resend puts the row back to PENDING.
+        end
+    end
