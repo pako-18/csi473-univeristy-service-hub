@@ -1,4 +1,5 @@
 erDiagram
+    %% Application tables refer to academic record tables by ID only. The record source is external (see deployment model), so there is no database foreign key across that boundary. Snapshots are stored instead.
     %% Academic record tables: read-only test data, accessed only via the Academic Record Adapter
     STUDENT ||--o{ ENROLMENT : holds
     PROGRAMME ||--o{ ENROLMENT : governs
@@ -78,6 +79,7 @@ erDiagram
         int requirement_id PK, FK
         boolean is_met
         int achieved_value "snapshot at check time"
+        int required_value "snapshot at check time"
     }
     APPROVAL_DECISION {
         int decision_id PK
@@ -98,6 +100,7 @@ erDiagram
         int template_version FK
         date issued_on
         date valid_until
+        text rendered_body "exact text issued, saved so later record changes cannot alter it"
         string revoked_by FK "NULL unless revoked"
         datetime revoked_on
     }
