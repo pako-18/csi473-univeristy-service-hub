@@ -1,0 +1,114 @@
+classDiagram
+    direction LR
+
+    class LetterIssuanceService {
+        +requestLetter(studentId) LetterRequest
+        +verifyAndIssue(requestId, officerId) Letter
+    }
+    class CompletionChecker {
+        +check(record, programme) CompletionResult
+    }
+    class EligibilityRule {
+        <<interface>>
+        +evaluate(record, programme) RuleResult
+    }
+    class CreditsRule
+    class CompulsoryModulesRule
+    class ElectiveCreditsRule
+
+    class LetterRequest {
+        id
+        studentId
+        status
+        reason
+    }
+    class Letter {
+        id
+        requestId
+        verificationCode
+        issuedOn
+    }
+    class CompletionResult {
+        eligible
+        outstandingItems
+    }
+
+    class LetterRequestRepository {
+        <<interface>>
+        +save(request)
+        +findById(id)
+    }
+    class LetterRepository {
+        <<interface>>
+        +save(letter)
+        +findByCode(code)
+    }
+    class StudentRecordsGateway {
+        <<interface>>
+        +getRecord(studentId)
+        +getProgramme(studentId)
+    }
+    class LetterRenderer {
+        <<interface>>
+        +render(letter, record) pdfBytes
+    }
+    class NotificationSender {
+        <<interface>>
+        +sendLetter(studentEmail, pdfBytes)
+    }
+    class AuditLog {
+        <<interface>>
+        +record(actor, action)
+    }
+
+    class DbLetterRequestRepository
+    class DbLetterRepository
+    class RecordsSystemAdapter
+    class PdfLetterRenderer
+    class EmailSender
+    class DbAuditLog
+           class ApprovalDecision {
+           requestId
+           outcome
+           decidedBy
+           decidedOn
+       }
+       class EmailOutbox {
+           <<interface>>
+           +queue(letterId, studentEmail)
+           +nextPending()
+           +markSent(id)
+           +markFailed(id)
+       }
+       class DbEmailOutbox
+       class EmailRetryWorker {
+           +sendPending()
+       }
+       class LetterVerificationService {
+           +verify(code) VerificationResult
+       }
+
+    LetterIssuanceService --> CompletionChecker
+    CompletionChecker --> EligibilityRule
+    CreditsRule ..|> EligibilityRule
+    CompulsoryModulesRule ..|> EligibilityRule
+    ElectiveCreditsRule ..|> EligibilityRule
+
+    LetterIssuanceService --> LetterRequestRepository
+    LetterIssuanceService --> LetterRepository
+    LetterIssuanceService --> StudentRecordsGateway
+    LetterIssuanceService --> LetterRenderer
+    LetterIssuanceService --> AuditLog
+
+    DbLetterRequestRepository ..|> LetterRequestRepository
+    DbLetterRepository ..|> LetterRepository
+    RecordsSystemAdapter ..|> StudentRecordsGateway
+    PdfLetterRenderer ..|> LetterRenderer
+    EmailSender ..|> NotificationSender
+    DbAuditLog ..|> AuditLog
+           LetterIssuanceService --> EmailOutbox
+       DbEmailOutbox ..|> EmailOutbox
+       EmailRetryWorker --> EmailOutbox
+       EmailRetryWorker --> NotificationSender
+       LetterRequest --> ApprovalDecision
+       LetterVerificationService --> LetterRepository
