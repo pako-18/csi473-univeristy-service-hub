@@ -11,4 +11,15 @@
 | P5 | Variable behaviour: eligibility rules differ by programme (credits, compulsory modules, electives). | Completion check | FR-04, FR-05, FR-06, FR-07 |
 
 ## 2. Pattern decisions
-(to be filled in Step 3)
+## 2. Pattern decisions
+
+| Pattern / technique | Solves | Participants (from detailed-class-design) | Why it fits our project | Cost accepted |
+|---|---|---|---|---|
+| Ports and Adapters (Repository, Gateway, Renderer) | P1, P2, P3 | LetterIssuanceService; LetterRequestRepository, LetterRepository, StudentRecordsGateway, LetterRenderer; DbLetterRequestRepository, DbLetterRepository, RecordsSystemAdapter, PdfLetterRenderer | The issuing logic must not depend on the database, the records source or the PDF tool. The prototype uses test records, and a real records system can replace it later. | More files and interfaces to write and keep in sync |
+| Strategy | P5 | CompletionChecker; EligibilityRule; CreditsRule, CompulsoryModulesRule, ElectiveCreditsRule | FR-04 to FR-06 are separate checks, and FR-07 needs an itemised list of what is missing. One rule class per check gives that list naturally. | Three small classes instead of one method |
+| Outbox | P4 | LetterIssuanceService; EmailOutbox; DbEmailOutbox; EmailRetryWorker; NotificationSender | FR-12 needs delivery to be logged, and the email server can fail. Saving the email first means a failed send is retried, not lost. | A background worker and an extra table (see decisions/ADR-002.md) |
+
+## 3. Exit record
+- **Greatest benefit:** Ports and Adapters. LetterIssuanceService can be tested without a database, records system or PDF tool.
+- **Cost:** extra interfaces and adapter classes to maintain.
+- **Test that confirms it works:** run verifyAndIssue with fake in-memory versions of the repositories, gateway and renderer. A student who meets all requirements gets a Letter with a verification code, and the test needs no database or email server.
