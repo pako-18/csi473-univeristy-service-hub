@@ -1,9 +1,9 @@
-classDiagram
+﻿classDiagram
     direction LR
 
     class LetterIssuanceService {
         +requestLetter(studentId) LetterRequest
-        +verifyAndIssue(requestId, officerId) Letter
+        +verifyAndIssue(requestId) Letter
     }
     class CompletionChecker {
         +check(record, programme) CompletionResult
@@ -60,6 +60,13 @@ classDiagram
         <<interface>>
         +record(actor, action)
     }
+    class EmailOutbox {
+        <<interface>>
+        +queue(letterId, studentEmail)
+        +nextPending()
+        +markSent(id)
+        +markFailed(id)
+    }
 
     class DbLetterRequestRepository
     class DbLetterRepository
@@ -67,29 +74,17 @@ classDiagram
     class PdfLetterRenderer
     class EmailSender
     class DbAuditLog
-           class ApprovalDecision {
-           requestId
-           outcome
-           decidedBy
-           decidedOn
-       }
-       class EmailOutbox {
-           <<interface>>
-           +queue(letterId, studentEmail)
-           +nextPending()
-           +markSent(id)
-           +markFailed(id)
-       }
-       class DbEmailOutbox
-       class EmailRetryWorker {
-           +sendPending()
-       }
-       class LetterVerificationService {
-           +verify(code) VerificationResult
-       }
+    class DbEmailOutbox
+    class EmailRetryWorker {
+        +sendPending()
+    }
+    class LetterVerificationService {
+        +verify(code) VerificationResult
+    }
 
     LetterIssuanceService --> CompletionChecker
     CompletionChecker --> EligibilityRule
+    CompletionChecker ..> CompletionResult
     CreditsRule ..|> EligibilityRule
     CompulsoryModulesRule ..|> EligibilityRule
     ElectiveCreditsRule ..|> EligibilityRule
@@ -99,6 +94,9 @@ classDiagram
     LetterIssuanceService --> StudentRecordsGateway
     LetterIssuanceService --> LetterRenderer
     LetterIssuanceService --> AuditLog
+    LetterIssuanceService --> EmailOutbox
+    LetterIssuanceService ..> LetterRequest
+    LetterIssuanceService ..> Letter
 
     DbLetterRequestRepository ..|> LetterRequestRepository
     DbLetterRepository ..|> LetterRepository
@@ -106,9 +104,9 @@ classDiagram
     PdfLetterRenderer ..|> LetterRenderer
     EmailSender ..|> NotificationSender
     DbAuditLog ..|> AuditLog
-           LetterIssuanceService --> EmailOutbox
-       DbEmailOutbox ..|> EmailOutbox
-       EmailRetryWorker --> EmailOutbox
-       EmailRetryWorker --> NotificationSender
-       LetterRequest --> ApprovalDecision
-       LetterVerificationService --> LetterRepository
+    DbEmailOutbox ..|> EmailOutbox
+
+    EmailRetryWorker --> EmailOutbox
+    EmailRetryWorker --> NotificationSender
+    EmailRetryWorker --> AuditLog
+    LetterVerificationService --> LetterRepository
