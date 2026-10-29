@@ -11,7 +11,6 @@
 | P5 | Variable behaviour: eligibility rules differ by programme (credits, compulsory modules, electives). | Completion check | FR-04, FR-05, FR-06, FR-07 |
 
 ## 2. Pattern decisions
-## 2. Pattern decisions
 
 | Pattern / technique | Solves | Participants (from detailed-class-design) | Why it fits our project | Cost accepted |
 |---|---|---|---|---|
