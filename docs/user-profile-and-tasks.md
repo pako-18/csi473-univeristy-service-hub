@@ -31,5 +31,10 @@ A student has just finished their final exams and needs a completion letter. The
 
 | Task | Requirements | Use cases | Quality concern |
 |---|---|---|---|
-| Student requests a completion letter | FR-01 (sign-in), FR-02 (retrieve record), FR-07 (itemise outstanding requirements), FR-08 (eligibility without manual input), FR-12 (email delivery) | UC-01, UC-02, UC-03, UC-10 | Usability: [ADD: quality scenario ID]; Accessibility: works on any device and browser |
-| Academic staff check a student's status | FR-01, FR-02, FR-03 (credits earned), FR-04 to FR-06 (checks), FR-07 | UC-01, UC-03, UC-09, UC-10 | Usability: [ADD: quality scenario ID] |
+| Student requests a completion letter | FR-01 (sign-in), FR-02 (retrieve record), FR-07 (itemise outstanding requirements), FR-08 (eligibility without manual input), FR-12 (email delivery) | UC-01, UC-02, UC-03, UC-10 | Usability: QS-1 (status within 3 seconds), QS-5 (letter generation), QS-6 (request effort); Accessibility: QS-7 (works on any device and browser) |
+| Academic staff check a student's status | FR-01, FR-02, FR-03 (credits earned), FR-04 to FR-06 (checks), FR-07 | UC-01, UC-03, UC-09, UC-10 | Security: QS-3 (unauthorised access); Usability: QS-6 (request effort); Accessibility: QS-7 (works on any device and browser) |
+
+## 6. Exit record (Lab 10)
+- **Most important usability problem:** in the usability test on 30 October 2026, a tester asked to find what was missing on the "Not yet eligible" screen could not see the list of outstanding requirements. The list was small and unlabelled, and the only prominent button was "Back to dashboard" (see `evidence/usability-test.md`, Task B).
+- **Interface change made:** the banner now states how many requirements are outstanding, a heading "What you still need:" sits above the list, and the list is larger, numbered and boxed. Requirements already met are shown separately (see `prototype/wireframes-student.html`).
+- **How it will be verified after implementation:** ask at least two people who have not seen the design to reach the "not eligible" screen and say what they still need. Each must name every outstanding item without help, within the limits in QS-6.
