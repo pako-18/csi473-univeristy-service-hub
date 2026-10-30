@@ -48,3 +48,10 @@ be added if it is to be assessed independently.
 `AuditEntry` with `ApprovalDecision`, `CompletionLetter` and
 `VerificationRequest`, as well as `LetterRequest`, so every FR-15 action has a
 modelled audit link.
+
+## Lab 10: usability and accessibility traceability
+
+| Task | Requirements | Quality scenarios | Planned verification |
+|---|---|---|---|
+| Student requests a completion letter | FR-02, FR-07, FR-08, FR-12 | QS-1, QS-5, QS-6, QS-7 | Usability test record (`evidence/usability-test.md`); accessibility checklist |
+| Academic staff check a student's status | FR-02, FR-03, FR-04 to FR-07 | QS-3, QS-6, QS-7 | Usability test record; unauthorised-access state in `docs/ui-states.md` 

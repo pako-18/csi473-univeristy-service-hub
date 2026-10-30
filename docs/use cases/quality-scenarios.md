@@ -71,3 +71,31 @@ The system confirms the student's completion status and generates the completion
 
 **Response Measure:**  
 The system should successfully generate the completion letter for at least 99% of valid completion requests.
+
+### QS-6 — Request Effort (Usability)
+
+**Stimulus:**
+A student wants to request a completion letter.
+
+**Context:**
+The student is signed in and uses a phone.
+
+**Expected Response:**
+The system lets the student request the letter and see the result, either the letter or the list of outstanding requirements.
+
+**Response Measure:**
+The student can complete the request in no more than 5 steps from the dashboard, and sees the result within 5 minutes with no human involved.
+
+### QS-7 — Access on Any Device (Accessibility)
+
+**Stimulus:**
+A student uses a phone, a shared campus computer or another person's laptop to reach the system.
+
+**Context:**
+The device has a standard web browser and may use the keyboard only, or have a slow connection.
+
+**Expected Response:**
+Every critical task works with the keyboard, visible focus, persistent labels, clear error messages and non-colour cues, and without installing an app.
+
+**Response Measure:**
+All items in `docs/accessibility-checklist.md` pass for the critical screens.
