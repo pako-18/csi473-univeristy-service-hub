@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lab 10 - Academic staff wireframes (Completion Letter system)</title>
+<style>
+  :root { --ink:#111; --line:#444; --soft:#f2f2f2; }
+  * { box-sizing: border-box; }
+  body { font-family: Arial, Helvetica, sans-serif; color: var(--ink); margin: 0; padding: 24px; background: #fff; line-height: 1.4; }
+  h1 { font-size: 1.4rem; margin: 0 0 4px; }
+  h2.group { font-size: 1.1rem; margin: 28px 0 10px; border-bottom: 2px solid var(--line); padding-bottom: 4px; }
+  p.meta { margin: 0 0 12px; color: #333; max-width: 75ch; }
+  .row { display: flex; flex-wrap: wrap; gap: 28px; align-items: flex-start; }
+  .screen { width: 300px; }
+  .screen h3.title { font-size: 1rem; margin: 0 0 6px; }
+  .phone { border: 3px solid var(--line); border-radius: 18px; padding: 14px; min-height: 380px; background: #fff; }
+  .phone h4 { margin: 0 0 10px; font-size: 1.05rem; border-bottom: 2px solid var(--line); padding-bottom: 6px; }
+  label { display: block; font-weight: bold; margin: 10px 0 4px; font-size: .9rem; }
+  input { width: 100%; padding: 9px; border: 2px solid var(--line); border-radius: 4px; font-size: 1rem; }
+  button { display: block; width: 100%; padding: 11px; margin-top: 12px; border: 2px solid var(--line); border-radius: 6px; background: var(--soft); font-size: 1rem; font-weight: bold; color: var(--ink); cursor: pointer; }
+  button:focus, input:focus, a:focus { outline: 4px solid #000; outline-offset: 2px; }
+  .box { border: 2px dashed var(--line); padding: 10px; margin: 10px 0; border-radius: 4px; }
+  .ok { border: 2px solid var(--line); padding: 8px; margin: 10px 0; font-weight: bold; }
+  .bad { border: 2px solid var(--line); border-left-width: 10px; padding: 8px; margin: 10px 0; font-weight: bold; }
+  .info { border: 2px solid var(--line); border-left-width: 10px; border-left-style: double; padding: 8px; margin: 10px 0; }
+  ul.req { list-style: none; padding: 0; margin: 8px 0; }
+  ul.req li { padding: 6px 0; border-bottom: 1px solid #bbb; font-size: .92rem; }
+  .note { font-size: .8rem; background: #fff8d6; border: 1px solid #c9b200; padding: 8px; margin-top: 8px; }
+  .note b { display: block; margin-bottom: 2px; }
+  a { color: #000; }
+</style>
+</head>
+<body>
+<h1>Academic staff wireframes: check a student's completion status</h1>
+<p class="meta">Low-fidelity wireframes for the secondary task in <code>docs/user-profile-and-tasks.md</code> (section 4). Every state is described in <code>docs/ui-states.md</code>. Dashed boxes are content placeholders. Yellow notes are annotations and are not part of the screen. Staff use the same Sign in screen as students (FR-01, role-based access), so it is not repeated here.</p>
+
+<h2 class="group">Main flow</h2>
+<div class="row">
+
+  <section class="screen" aria-labelledby="a1">
+    <h3 class="title" id="a1">Step 1: Student lookup</h3>
+    <div class="phone">
+      <h4>Check student status</h4>
+      <form onsubmit="return false">
+        <label for="stid">Student ID</label>
+        <input id="stid" name="stid" inputmode="numeric">
+        <button type="submit">Check status</button>
+      </form>
+      <p style="font-size:.9rem">Enter a student ID to see their completion status.</p>
+      <div class="box" role="status">Looking up student&hellip; (loading state)</div>
+      <a href="#">Sign out</a>
+    </div>
+    <div class="note"><b>FR-02, UC-03, UC-09</b>One field and one action. The label stays visible. The loading message is announced to screen readers. Reachable by keyboard with a visible focus outline.</div>
+  </section>
+
+  <section class="screen" aria-labelledby="a2">
+    <h3 class="title" id="a2">Step 2 (eligible): Result</h3>
+    <div class="phone">
+      <h4>Student [ID]: [Name]</h4>
+      <div class="ok">&#10004; Eligible: all requirements met.</div>
+      <div class="box">Programme: [name]<br>Credits earned: [n] of [n]<br>Record last updated: [date]</div>
+      <a href="#">View issued letter</a> <small>(shown only if a letter has been issued)</small>
+      <button type="button">Check another student</button>
+    </div>
+    <div class="note"><b>FR-03, FR-04, FR-08, UC-10</b>Status is shown with a tick and the word "Eligible", not colour alone. The letter link appears only when a letter exists.</div>
+  </section>
+
+  <section class="screen" aria-labelledby="a3">
+    <h3 class="title" id="a3">Step 2 (not eligible): Result</h3>
+    <div class="phone">
+      <h4>Student [ID]: [Name]</h4>
+      <div class="bad">&#10006; Not eligible: requirements outstanding.</div>
+      <ul class="req">
+        <li>&#10006; Credits: [n] more needed</li>
+        <li>&#10006; Compulsory module: [code, name]</li>
+        <li>&#10004; Elective credits: met</li>
+      </ul>
+      <div class="box">Record last updated: [date]</div>
+      <button type="button">Check another student</button>
+    </div>
+    <div class="note"><b>FR-04 to FR-07, UC-10</b>Each unmet item is listed on its own line, so staff can tell the student exactly what is missing. Met and unmet items are marked by icon and word.</div>
+  </section>
+
+</div>
+
+<h2 class="group">Alternative states</h2>
+<div class="row">
+
+  <section class="screen" aria-labelledby="b1">
+    <h3 class="title" id="b1">Validation: empty ID</h3>
+    <div class="phone">
+      <h4>Check student status</h4>
+      <form onsubmit="return false">
+        <label for="stid2">Student ID</label>
+        <input id="stid2" name="stid2" aria-describedby="e1" aria-invalid="true">
+        <div class="bad" id="e1" role="alert">&#10006; Enter a student ID.</div>
+        <button type="submit">Check status</button>
+      </form>
+    </div>
+    <div class="note"><b>QS-6, QS-7</b>The message sits under the field and keyboard focus returns to it. Wrong format: "Student ID must contain digits only."</div>
+  </section>
+
+  <section class="screen" aria-labelledby="b2">
+    <h3 class="title" id="b2">Error: student not found</h3>
+    <div class="phone">
+      <h4>Check student status</h4>
+      <form onsubmit="return false">
+        <label for="stid3">Student ID</label>
+        <input id="stid3" name="stid3" value="[ID entered]">
+        <div class="bad" role="alert">&#10006; No student found with ID [ID]. Check the ID and try again.</div>
+        <button type="submit">Check status</button>
+      </form>
+    </div>
+    <div class="note"><b>UC-03</b>The ID the user typed stays in the field so they can correct it.</div>
+  </section>
+
+  <section class="screen" aria-labelledby="b3">
+    <h3 class="title" id="b3">Unavailable: records system down</h3>
+    <div class="phone">
+      <h4>Check student status</h4>
+      <div class="info" role="alert">&#9888; Student records are temporarily unavailable. Please try again later.</div>
+      <p style="font-size:.9rem">No status is shown, and nothing is guessed.</p>
+      <button type="button">Try again</button>
+    </div>
+    <div class="note"><b>FR-02, UC-03 alt. flow, QS-4</b>Warning uses an icon, a double-line border and words. No stale status is presented as current.</div>
+  </section>
+
+  <section class="screen" aria-labelledby="b4">
+    <h3 class="title" id="b4">Unauthorised: student opens staff page</h3>
+    <div class="phone">
+      <h4>Access denied</h4>
+      <div class="bad" role="alert">&#10006; You do not have permission to view this page.</div>
+      <a href="#">Go to my dashboard</a>
+    </div>
+    <div class="note"><b>FR-01, QS-3</b>No student data is shown, not even empty fields. The user gets a way back to a page they may use.</div>
+  </section>
+
+</div>
+</body>
+</html>
