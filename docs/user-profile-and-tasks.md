@@ -26,3 +26,10 @@ A student has just finished their final exams and needs a completion letter. The
 - When the student is found, the staff member sees their completion status and either "eligible" or the list of outstanding requirements.
 - When the student is not found, a clear error message says that no student matches the ID entered.
 - When the records system is unavailable, a message says the records are temporarily unavailable and to try again later, and no status is guessed or shown.
+
+## 5. Links to requirements
+
+| Task | Requirements | Use cases | Quality concern |
+|---|---|---|---|
+| Student requests a completion letter | FR-01 (sign-in), FR-02 (retrieve record), FR-07 (itemise outstanding requirements), FR-08 (eligibility without manual input), FR-12 (email delivery) | UC-01, UC-02, UC-03, UC-10 | Usability: [ADD: quality scenario ID]; Accessibility: works on any device and browser |
+| Academic staff check a student's status | FR-01, FR-02, FR-03 (credits earned), FR-04 to FR-06 (checks), FR-07 | UC-01, UC-03, UC-09, UC-10 | Usability: [ADD: quality scenario ID] |
