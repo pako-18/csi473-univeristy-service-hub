@@ -1,0 +1,19 @@
+%% Lab 10 - Navigation model: Student requests a completion letter (task in docs/user-profile-and-tasks.md)
+%% Shortest path: Sign in -> Dashboard -> Request completion letter -> Result = 4 steps (limit: 5, QS-6).
+%% Chosen design (A): the student presses "Request completion letter" on the dashboard, then sees the result.
+%% Rejected alternative (B): show completion status automatically on the dashboard after sign-in (3 steps).
+%% Why A: it matches the LetterRequest lifecycle and the task scenario ("request a letter"), and the eligibility
+%% check runs only when asked. Consequence accepted: one extra step compared with B.
+%% Steps are counted per screen; error screens return the student to a working screen.
+flowchart LR
+    A["1. Sign in"] --> B["2. Dashboard"]
+    A -- "wrong details" --> A1["Sign-in error"]
+    A1 --> A
+    B --> C["3. Request completion letter"]
+    C --> D{"Eligible?"}
+    D -- "yes" --> E["4. Letter ready: download or print"]
+    D -- "no" --> F["4. Outstanding requirements"]
+    C -- "records unavailable" --> G["Try again later"]
+    E --> B
+    F --> B
+    G --> B
