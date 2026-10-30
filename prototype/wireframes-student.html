@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lab 10 - Student wireframes (Completion Letter system)</title>
+<style>
+  :root { --ink:#111; --line:#444; --soft:#f2f2f2; }
+  * { box-sizing: border-box; }
+  body { font-family: Arial, Helvetica, sans-serif; color: var(--ink); margin: 0; padding: 24px; background: #fff; line-height: 1.4; }
+  h1 { font-size: 1.4rem; margin: 0 0 4px; }
+  p.meta { margin: 0 0 20px; color: #333; max-width: 70ch; }
+  .row { display: flex; flex-wrap: wrap; gap: 28px; align-items: flex-start; }
+  .screen { width: 300px; }
+  .screen h2 { font-size: 1rem; margin: 0 0 6px; }
+  .phone { border: 3px solid var(--line); border-radius: 18px; padding: 14px; min-height: 420px; background: #fff; }
+  .phone h3 { margin: 0 0 10px; font-size: 1.05rem; border-bottom: 2px solid var(--line); padding-bottom: 6px; }
+  label { display: block; font-weight: bold; margin: 10px 0 4px; font-size: .9rem; }
+  input { width: 100%; padding: 9px; border: 2px solid var(--line); border-radius: 4px; font-size: 1rem; }
+  button, .btn { display: block; width: 100%; padding: 11px; margin-top: 12px; border: 2px solid var(--line); border-radius: 6px; background: var(--soft); font-size: 1rem; font-weight: bold; text-align: center; color: var(--ink); cursor: pointer; }
+  button:focus, input:focus, a:focus { outline: 4px solid #000; outline-offset: 2px; }
+  .box { border: 2px dashed var(--line); padding: 10px; margin: 10px 0; border-radius: 4px; }
+  .ok { border: 2px solid var(--line); padding: 8px; margin: 10px 0; font-weight: bold; }
+  .bad { border: 2px solid var(--line); border-left-width: 10px; padding: 8px; margin: 10px 0; font-weight: bold; }
+  ul.req { list-style: none; padding: 0; margin: 8px 0; }
+  ul.req li { padding: 6px 0; border-bottom: 1px solid #bbb; font-size: .92rem; }
+  .note { font-size: .8rem; background: #fff8d6; border: 1px solid #c9b200; padding: 8px; margin-top: 8px; }
+  .note b { display: block; margin-bottom: 2px; }
+  a { color: #000; }
+  nav.stepper { font-size: .8rem; margin-bottom: 8px; }
+  @media (max-width: 360px) { .screen { width: 100%; } }
+</style>
+</head>
+<body>
+<h1>Student wireframes: request a completion letter</h1>
+<p class="meta">Low-fidelity wireframes for the primary task in <code>docs/user-profile-and-tasks.md</code>. Follows <code>models/navigation.mmd</code> (4 steps on the shortest path). Boxes with dashed borders are content placeholders. Yellow notes are annotations and are not part of the screen.</p>
+
+<div class="row">
+
+  <!-- Screen 1 -->
+  <section class="screen" aria-labelledby="s1">
+    <h2 id="s1">Step 1: Sign in</h2>
+    <div class="phone">
+      <h3>University of Botswana<br>Completion Letters</h3>
+      <form onsubmit="return false">
+        <label for="sid">Student ID</label>
+        <input id="sid" name="sid" inputmode="numeric" autocomplete="username">
+        <label for="pw">Password</label>
+        <input id="pw" name="pw" type="password" autocomplete="current-password">
+        <button type="submit">Sign in</button>
+      </form>
+      <div class="bad" role="alert">&#10006; Error example: Student ID or password is incorrect. Please check and try again.</div>
+    </div>
+    <div class="note"><b>FR-01, UC-01</b>Labels stay visible above the fields (not placeholder text). The error uses an icon and words, not colour alone. Fields and button are reachable by Tab, with a visible focus outline.</div>
+  </section>
+
+  <!-- Screen 2 -->
+  <section class="screen" aria-labelledby="s2">
+    <h2 id="s2">Step 2: Dashboard</h2>
+    <div class="phone">
+      <h3>Welcome, [Student name]</h3>
+      <div class="box">Programme: [name]<br>Credits earned: [n] of [n]</div>
+      <div class="box">My letter requests<br><i>(none yet)</i></div>
+      <button type="button">Request completion letter</button>
+      <a href="#">Sign out</a>
+    </div>
+    <div class="note"><b>UC-02, QS-6</b>One clear main action. The button label says what it does. Larger touch target for phones.</div>
+  </section>
+
+  <!-- Screen 3 -->
+  <section class="screen" aria-labelledby="s3">
+    <h2 id="s3">Step 3: Request completion letter</h2>
+    <div class="phone">
+      <nav class="stepper" aria-label="Back"><a href="#">&larr; Back to dashboard</a></nav>
+      <h3>Request completion letter</h3>
+      <p>We will check your academic record against your programme requirements. If you meet them, your letter is issued straight away.</p>
+      <button type="button">Check and request letter</button>
+      <div class="box" role="status">Checking your record&hellip; (loading state)</div>
+    </div>
+    <div class="note"><b>FR-02, FR-08, QS-1</b>Result is expected within seconds (QS-1). The loading message is announced to screen readers (role=status). The check needs no staff action.</div>
+  </section>
+
+  <!-- Screen 4a -->
+  <section class="screen" aria-labelledby="s4a">
+    <h2 id="s4a">Step 4 (eligible): Letter ready</h2>
+    <div class="phone">
+      <h3>Letter ready</h3>
+      <div class="ok">&#10004; You have met all requirements.</div>
+      <div class="box">Completion letter [preview]<br>Verification code: [code]</div>
+      <button type="button">Download letter (PDF)</button>
+      <button type="button">Print letter</button>
+      <p style="font-size:.85rem">A copy has also been sent to your university email.</p>
+      <a href="#">Back to dashboard</a>
+    </div>
+    <div class="note"><b>FR-11, FR-12, FR-13, QS-5</b>Success shown with a tick icon and text. Download and print both offered. Email may arrive slightly after the letter appears on screen.</div>
+  </section>
+
+  <!-- Screen 4b -->
+  <section class="screen" aria-labelledby="s4b">
+    <h2 id="s4b">Step 4 (not eligible): Outstanding requirements</h2>
+    <div class="phone">
+      <h3>Not yet eligible</h3>
+      <div class="bad">&#10006; Some requirements are still outstanding.</div>
+      <ul class="req">
+        <li>&#10006; Credits: [n] more needed</li>
+        <li>&#10006; Compulsory module: [code, name]</li>
+        <li>&#10004; Elective credits: met</li>
+      </ul>
+      <button type="button">Back to dashboard</button>
+    </div>
+    <div class="note"><b>FR-04 to FR-07, UC-10</b>Each unmet item listed on its own, never a single yes/no. Met and unmet items are marked by icon and word, not colour only.</div>
+  </section>
+
+</div>
+</body>
+</html>
